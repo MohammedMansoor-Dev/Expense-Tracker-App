@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="signup-superContainer">
+    <!-- Navbar -->
+    <nav>
+        <div class="navbar-container">
+            <h1><a>Expense Tracker</a></h1>
+        </div>
+    </nav>
+    <hr class="hr">
+    <!-- Signup Container -->
+    <div class="container-signup">
+        <h1>Sign Up</h1>
+
+        <!-- Signup Form -->
+        <form id="signup-form" onsubmit="handleSubmit(event)">
+            <input type="text" id="signup-username" name="username" placeholder="Username" required />
+            <input type="email" id="signup-email" name="email" placeholder="Email" required />
+            <input type="password" id="signup-password" name="password" placeholder="Password" required />
+            <input type="password" id="signup-confirm-password" name="confirmPassword" placeholder="Confirm Password"
+                required />
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <p>Already have an account? <a href="login.html">Login here</a></p>
+    </div>
+    <hr class="hr">
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Expense Tracker App | All Rights Reserved</p>
+    </footer>
+
+    <script>
+        let username = document.querySelector('#signup-username');
+        let email = document.querySelector('#signup-email');
+        let password = document.querySelector('#signup-password');
+        let confirmPassword = document.querySelector('#signup-confirm-password');
+
+        const handleSubmit = async (event) => {
+            event.preventDefault();
+            if (password.value !== confirmPassword.value) {
+                alert('Password and Confirm Password should be the same');
+                username.value = '';
+                email.value = '';
+                password.value = '';
+                confirmPassword.value = '';
+                return;
+            }
+
+            await fetch('http://localhost:8000/user/signup', { // Make sure this URL is pointing to the backend server
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify({
+                    username: username.value,
+                    email: email.value,
+                    password: password.value
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('User signed up:', data);
+
+                    // Store data in localStorage with a key, for example, 'user'
+                    localStorage.setItem('user', JSON.stringify(data));
+
+                    // Redirect to index.html
+                    window.location.href = "index.html";
+                })
+                .catch((error) => {
+                    console.error('Error during signup:', error);
+                });
+        };
+
+    </script>
+</body>
+
+</html>

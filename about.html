@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* About Section */
+        .about-container {
+            padding: 50px 20px;
+            text-align: center;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+
+        .about-container h1 {
+            font-size: 36px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .about-container p {
+            font-size: 18px;
+            color: #555;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .feature-list,
+        .mission-statement,
+        .benefits,
+        .testimonials {
+            margin: 40px 0;
+        }
+
+        .feature-list ul {
+            list-style-type: square;
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .feature-list ul li {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .benefit-card,
+        .testimonial-card {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        .benefit-card h3,
+        .testimonial-card h3 {
+            color: #2c3e50;
+        }
+
+        .testimonial-card {
+            font-style: italic;
+        }
+
+        .benefits,
+        .testimonials {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .benefit-card,
+        .testimonial-card {
+            width: 30%;
+            margin-bottom: 20px;
+        }
+
+        /* Mission Statement Toggle */
+        .mission-statement p {
+            transition: max-height 0.3s ease-in-out;
+            max-height: 100px;
+            overflow: hidden;
+        }
+
+        .mission-statement.expanded p {
+            max-height: 300px;
+        }
+
+        /* Button Styling */
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav>
+        <div class="navbar-container">
+            <h1><a href="index.html">Expense Tracker</a></h1>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="graph.html">Graph</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li onclick="handleLogout()" class="logout">Logout</li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- About Section -->
+    <div class="about-container">
+        <h1>About Expense Tracker</h1>
+        <p>Welcome to the Expense Tracker App! This app helps you manage your finances by tracking your income and
+            expenses efficiently. With a user-friendly interface, you can gain full control over your budget and make
+            smarter financial decisions.</p>
+
+        <!-- Features -->
+        <div class="feature-list">
+            <h2>Features</h2>
+            <ul>
+                <li>Track daily expenses</li>
+                <li>Set and manage your budget</li>
+                <li>View graphical representation of your spending</li>
+                <li>Secure and easy-to-use interface</li>
+                <li>Get notifications when you approach your expense limit</li>
+            </ul>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="benefits">
+            <div class="benefit-card">
+                <h3>Easy Budget Management</h3>
+                <p>Easily create and manage budgets for various categories like groceries, entertainment, and bills.</p>
+            </div>
+            <div class="benefit-card">
+                <h3>Smart Notifications</h3>
+                <p>Receive notifications when you are close to your spending limit so you can adjust your expenses in
+                    time.</p>
+            </div>
+            <div class="benefit-card">
+                <h3>Graphical Reports</h3>
+                <p>Get visual reports of your spending patterns, helping you understand where your money goes each
+                    month.</p>
+            </div>
+        </div>
+
+        <!-- Testimonials Section -->
+        <div class="testimonials">
+            <div class="testimonial-card">
+                <h3>John Doe</h3>
+                <p>"The Expense Tracker app has completely transformed the way I manage my finances. It's simple to
+                    use and incredibly helpful."</p>
+            </div>
+            <div class="testimonial-card">
+                <h3>Jane Smith</h3>
+                <p>"I love the budget setting and the spending notifications! It helps me stay on track every month."</p>
+            </div>
+            <div class="testimonial-card">
+                <h3>Emily Davis</h3>
+                <p>"The pie charts and graphs make it so easy to understand my expenses. I recommend this app to
+                    everyone!"</p>
+            </div>
+        </div>
+
+        <!-- Mission Statement -->
+        <div class="mission-statement">
+            <h2>Our Mission</h2>
+            <p>We aim to empower individuals and families to take control of their finances, enabling smarter spending
+                decisions through simplicity, innovation, and easy-to-use tools. Our goal is to help you track your
+                expenses and manage your money more efficiently.</p>
+            <button onclick="toggleMission()">Learn More About Our Mission</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Expense Tracker App | All Rights Reserved</p>
+    </footer>
+
+    <script>
+        // JavaScript to toggle visibility of extra information in mission statement
+        function toggleMission() {
+            const missionSection = document.querySelector('.mission-statement');
+            missionSection.classList.toggle('expanded');
+            const button = missionSection.querySelector('button');
+            if (missionSection.classList.contains('expanded')) {
+                button.textContent = 'Show Less';
+            } else {
+                button.textContent = 'Learn More About Our Mission';
+            }
+        }
+
+        // Handle logout and local storage removal
+        const handleLogout = () => {
+            localStorage.removeItem("user");
+            window.location.href = "login.html"; // Redirect to login page
+        };
+    </script>
+</body>
+
+</html>

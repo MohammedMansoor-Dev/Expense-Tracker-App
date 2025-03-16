@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        footer {
+            margin-top: 20px;
+        }
+
+        #no-expenses-message {
+            font-size: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .set-limitBtn {
+            margin-top: 20px;
+        }
+
+        #expense-limit-form {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #expense-limit-form input {
+            padding: 10px;
+            font-size: 16px;
+            width: 100px;
+            margin-right: 10px;
+        }
+
+        #expense-limit-form button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        #limit-notification {
+            display: none;
+            color: red;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .logout{
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="navbar-container">
+            <h1><a href="index.html">Expense Tracker</a></h1>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="graph.html">Graph</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li onclick="handleLogout()" class="logout">Logout</li>
+            </ul>
+        </div>
+    </nav>
+
+    <footer>
+        <p>&copy; 2025 Expense Tracker App | All Rights Reserved</p>
+    </footer>
+
+    <div id="no-expenses-message" style="display: none;">
+        <p>No expenses yet.</p>
+    </div>
+
+    <div class="set-limitBtn">
+        <button id="set-limit-btn">Set Expense Limit</button>
+    </div>
+
+    <!-- Form to set the expense limit -->
+    <div id="expense-limit-form">
+        <label for="limit">Enter Expense Limit: </label>
+        <input type="number" id="limit" placeholder="Amount" />
+        <button id="save-limit-btn">Save Limit</button>
+    </div>
+
+    <div id="limit-notification">
+        <p>You have reached your expense limit!</p>
+    </div>
+
+    <canvas id="myChart" style="width:100%;max-width:750px; height: 300px; display: none;"></canvas>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+    <script>
+        // Retrieve data from localStorage
+        const expenses = JSON.parse(localStorage.getItem("expenses"));
+        const expenseLimit = parseFloat(localStorage.getItem("expenseLimit"));
+
+        // Function to request notification permission
+        function requestNotificationPermission() {
+            if (Notification.permission === "default") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        console.log("Notification permission granted.");
+                    } else {
+                        console.log("Notification permission denied.");
+                    }
+                });
+            }
+        }
+
+        // Function to send notification
+        function sendNotification() {
+            if (Notification.permission === "granted") {
+                new Notification("Expense Tracker", {
+                    body: "You have reached your expense limit!",
+                    icon: "logo.png"  // Optional: You can add an icon here
+                });
+            }
+        }
+
+        // Check if there is any expense data
+        if (!expenses || expenses.length === 0) {
+            document.getElementById("no-expenses-message").style.display = "block";
+            document.getElementById("myChart").style.display = "none";
+        } else {
+            // Process the data: sum amounts by category
+            const categoryTotals = {};
+
+            expenses.forEach(expense => {
+                if (categoryTotals[expense.category]) {
+                    categoryTotals[expense.category] += expense.amount;
+                } else {
+                    categoryTotals[expense.category] = expense.amount;
+                }
+            });
+
+            // Prepare data for the chart
+            const categories = Object.keys(categoryTotals);
+            const amounts = Object.values(categoryTotals);
+
+            // Colors for the chart
+            const barColors = [
+                "#b91d47", "#00aba9", "#2b5797", "#e8c3b9", "#1e7145"
+            ];
+
+            // Create the pie chart
+            new Chart("myChart", {
+                type: "pie",
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        backgroundColor: barColors,
+                        data: amounts
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: "Expense Categories"
+                    }
+                }
+            });
+
+            // Hide the "No expenses yet" message and show the chart
+            document.getElementById("no-expenses-message").style.display = "none";
+            document.getElementById("myChart").style.display = "block";
+
+            // Check if the total expenses exceed the limit
+            const totalExpense = amounts.reduce((acc, curr) => acc + curr, 0);
+            if (expenseLimit && totalExpense >= expenseLimit) {
+                document.getElementById("limit-notification").style.display = "block";
+
+                // Request permission and send notification if permission granted
+                requestNotificationPermission();
+                sendNotification();
+            }
+        }
+
+        // Show form to set limit
+        document.getElementById("set-limit-btn").addEventListener("click", function () {
+            document.getElementById("expense-limit-form").style.display = "block";
+            // Request notification permission when the user clicks on Set Limit
+            requestNotificationPermission();
+        });
+
+        // Save expense limit to localStorage
+        document.getElementById("save-limit-btn").addEventListener("click", function () {
+            const limit = document.getElementById("limit").value;
+            if (limit && !isNaN(limit)) {
+                localStorage.setItem("expenseLimit", limit);
+                alert("Expense limit set successfully.");
+                location.reload()
+                document.getElementById("expense-limit-form").style.display = "none";
+            } else {
+                alert("Please enter a valid number.");
+            }
+        });
+
+        const handleLogout = () => {
+            console.log('Logging out');
+            localStorage.removeItem('user'); // Use the correct key 'user'
+            localStorage.removeItem('expenses');
+            localStorage.removeItem('expenseLimit');
+            window.location.href = 'login.html'; // Redirect to the login page after logout
+        }
+
+    </script>
+
+</body>
+
+</html>
